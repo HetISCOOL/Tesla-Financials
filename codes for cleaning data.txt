@@ -1,0 +1,201 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Monthly Stock Price
+
+import pandas as pd
+
+# Load the dataset
+file_path = r"C:\Users\GGPC\Desktop\Python Trial\tesla_monthly_stock_prices.csv"  # Use raw string to avoid escape issues
+df = pd.read_csv(file_path)
+
+# Convert Date column to datetime format and remove timezone information
+df["Date"] = pd.to_datetime(df["Date"], errors='coerce', utc=True)
+df["Date"] = df["Date"].dt.tz_localize(None)
+
+# Drop missing values
+df = df.dropna()
+
+# Ensure numeric columns are properly formatted
+numeric_columns = ["Open", "High", "Low", "Close", "Volume"]
+df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce')
+
+# Remove duplicates
+df = df.drop_duplicates()
+
+# Ensure Volume column has only non-negative values
+df = df[df["Volume"] >= 0]
+
+# Save the cleaned dataset to a new CSV file
+cleaned_file_path = r"C:\Users\GGPC\Desktop\Python Trial\cleaned_tesla_stock_prices.csv"
+df.to_csv(cleaned_file_path, index=False)
+
+# Display the cleaned data
+print("Cleaned data saved to:", cleaned_file_path)
+print(df.head())
+"""
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Balance Sheet
+
+
+import pandas as pd
+
+# Load the dataset
+file_path = r"C:\Users\GGPC\Desktop\Python Trial\tesla_balance_sheet.csv"  # Use raw string for Windows paths
+df = pd.read_csv(file_path)
+
+# Rename the first column to "Date"
+df.rename(columns={"Unnamed: 0": "Date"}, inplace=True)
+
+# Convert Date column to datetime format
+df["Date"] = pd.to_datetime(df["Date"], errors='coerce')
+
+# Drop columns that have excessive missing values (more than 50% missing)
+df = df.dropna(thresh=len(df) * 0.5, axis=1)
+
+# Fill missing values in numerical columns with 0 (assuming financial values are better as 0 than NaN)
+df.fillna(0, inplace=True)
+
+# Ensure all numeric columns are properly formatted
+numeric_columns = df.columns[1:]  # Exclude 'Date' column
+df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce')
+
+# Remove duplicate rows
+df = df.drop_duplicates()
+
+# Selecting only the required columns
+required_columns = [
+    "Date", "Revenue", "Net Income", "Total Debt", "Total Equity", 
+    "Working Capital", "Cash And Cash Equivalents", "Short Term Investments", 
+    "Total Assets", "Net Tangible Assets", "Finished Goods", "Work In Process", 
+    "Raw Materials", "Accounts Receivable"
+]
+
+# Check which of these columns exist in the dataset
+existing_columns = [col for col in required_columns if col in df.columns]
+
+# Filter the dataset to include only the required columns that exist
+df_filtered = df[existing_columns].copy()
+
+# Calculate Debt-to-Equity Ratio if both columns exist
+if "Total Debt" in df_filtered.columns and "Total Equity" in df_filtered.columns:
+    df_filtered["Debt-to-Equity Ratio"] = df_filtered["Total Debt"] / df_filtered["Total Equity"]
+
+# Save the cleaned dataset to a new CSV file
+cleaned_file_path = r"C:\Users\GGPC\Desktop\Python Trial\cleaned_tesla_balance_sheet.csv"
+df_filtered.to_csv(cleaned_file_path, index=False)
+
+# Display the cleaned data
+print("Cleaned data saved to:", cleaned_file_path)
+print(df_filtered.head())
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+# CAsh Flow
+
+
+import pandas as pd
+
+# Load the dataset
+file_path = r"C:\Users\GGPC\Desktop\Python Trial\tesla_cash_flow.csv"  # Use raw string for Windows paths
+df = pd.read_csv(file_path)
+
+# Rename the first column to "Date"
+df.rename(columns={"Unnamed: 0": "Date"}, inplace=True)
+
+# Convert Date column to datetime format
+df["Date"] = pd.to_datetime(df["Date"], errors='coerce')
+
+# Selecting only the required columns
+required_columns = [
+    "Date", "Free Cash Flow", "Repayment Of Debt", "Issuance Of Debt", 
+    "Capital Expenditure", "End Cash Position", "Depreciation And Amortization", 
+    "Net Income From Continuing Operations"
+]
+
+# Check which required columns exist in the dataset
+existing_columns = [col for col in required_columns if col in df.columns]
+
+# Filter the dataset to include only the required columns that exist
+df_filtered = df[existing_columns].copy()
+
+# Fill missing values with 0 (assuming financial metrics are better with zero than NaN)
+df_filtered.fillna(0, inplace=True)
+
+# Ensure all numeric columns are correctly formatted
+numeric_columns = df_filtered.columns[1:]  # Exclude "Date"
+df_filtered[numeric_columns] = df_filtered[numeric_columns].apply(pd.to_numeric, errors='coerce')
+
+# Remove duplicate rows
+df_filtered = df_filtered.drop_duplicates()
+
+# Save the cleaned dataset to a new CSV file
+cleaned_file_path = r"C:\Users\GGPC\Desktop\Python Trial\cleaned_tesla_cash_flow.csv"
+df_filtered.to_csv(cleaned_file_path, index=False)
+
+# Display the cleaned data
+print("Cleaned data saved to:", cleaned_file_path)
+print(df_filtered.head())
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# Income Statement
+
+
+import pandas as pd
+
+# Load the dataset
+file_path = r"C:\Users\GGPC\Desktop\Python Trial\tesla_income_statement.csv"  # Use raw string for Windows paths
+df = pd.read_csv(file_path)
+
+# Rename the first column to "Date"
+df.rename(columns={"Unnamed: 0": "Date"}, inplace=True)
+
+# Convert Date column to datetime format
+df["Date"] = pd.to_datetime(df["Date"], errors='coerce')
+
+# Selecting only the required columns
+required_columns = [
+    "Date", "Total Revenue", "Gross Profit", "Operating Income", 
+    "Net Income From Continuing Operation", "Cost Of Revenue", 
+    "Operating Expense", "Selling General And Administration", 
+    "Research And Development", "Interest Expense Non Operating", 
+    "Interest Income Non Operating", "EBITDA", "Reconciled Depreciation"
+]
+
+# Check which required columns exist in the dataset
+existing_columns = [col for col in required_columns if col in df.columns]
+
+# Filter the dataset to include only the required columns that exist
+df_filtered = df[existing_columns].copy()
+
+# Fill missing values with 0 (assuming financial metrics are better with zero than NaN)
+df_filtered.fillna(0, inplace=True)
+
+# Ensure all numeric columns are correctly formatted
+numeric_columns = df_filtered.columns[1:]  # Exclude "Date"
+df_filtered[numeric_columns] = df_filtered[numeric_columns].apply(pd.to_numeric, errors='coerce')
+
+# Remove duplicate rows
+df_filtered = df_filtered.drop_duplicates()
+
+# Save the cleaned dataset to a new CSV file
+cleaned_file_path = r"C:\Users\GGPC\Desktop\Python Trial\cleaned_tesla_income_statement.csv"
+df_filtered.to_csv(cleaned_file_path, index=False)
+
+# Display the cleaned data
+print("Cleaned data saved to:", cleaned_file_path)
+print(df_filtered.head())
+
+
