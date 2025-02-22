@@ -1,0 +1,107 @@
+Tesla's Revenue & Profitability Trends:
+
+SELECT Date, 
+       Total_Revenue, 
+       Operating_Income
+FROM cleaned_tesla_income_statement
+ORDER BY Date ASC;
+
+
+
+
+
+
+
+
+
+SELECT Date, 
+       Total_Revenue, 
+       Operating_Income, 
+       CASE 
+           WHEN Total_Revenue = 0 THEN NULL  -- Avoid division by zero
+           ELSE ROUND((Operating_Income * 1.0 / Total_Revenue) * 100, 2) 
+       END AS Net_Profit_Margin
+FROM cleaned_tesla_income_statement
+ORDER BY Date ASC;
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Liquidity & Cash Flow Analysis
+
+
+SELECT Date, Free_Cash_Flow
+FROM cleaned_tesla_cash_flow
+ORDER BY Date ASC;
+
+
+
+
+
+
+
+SELECT c.Date, 
+       c.Free_Cash_Flow, 
+       b.Total_Debt, 
+       (c.Free_Cash_Flow / b.Total_Debt) AS Operating_Cash_Flow_Ratio
+FROM cleaned_tesla_cash_flow c
+JOIN cleaned_tesla_balance_sheet b USING (Date)
+ORDER BY c.Date ASC;
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Debt & Financial Stability
+
+SELECT Date, 
+       Total_Debt, 
+       (Total_Assets - Total_Debt) AS Total_Equity,
+       (Total_Debt / (Total_Assets - Total_Debt)) AS Debt_to_Equity_Ratio
+FROM cleaned_tesla_balance_sheet
+ORDER BY Date ASC;
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Stock Price Performance & Financial Data Correlation
+
+SELECT Date, 
+       Open, 
+       High, 
+       Low, 
+       Close, 
+       Volume
+FROM cleaned_tesla_stock_prices
+ORDER BY Date ASC;
+
+
+
+
+
+
+SELECT Date, 
+       Open, 
+       Close, 
+       ((Close - Open) / Open) * 100 AS Monthly_Return
+FROM cleaned_tesla_stock_prices
+ORDER BY Date ASC;
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
