@@ -1,0 +1,146 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Monthly Stock Price
+
+import pandas as pd
+
+file_path = r"C:\Users\GGPC\Desktop\Python Trial\tesla_monthly_stock_prices.csv"
+df = pd.read_csv(file_path)
+
+df["Date"] = pd.to_datetime(df["Date"], errors='coerce', utc=True)
+df["Date"] = df["Date"].dt.tz_localize(None)
+
+df = df.dropna()
+
+numeric_columns = ["Open", "High", "Low", "Close", "Volume"]
+df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce')
+
+df = df.drop_duplicates()
+
+df = df[df["Volume"] >= 0]
+
+cleaned_file_path = r"C:\Users\GGPC\Desktop\Python Trial\cleaned_tesla_stock_prices.csv"
+df.to_csv(cleaned_file_path, index=False)
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Balance Sheet
+
+import pandas as pd
+
+file_path = r"C:\Users\GGPC\Desktop\Python Trial\tesla_balance_sheet.csv"
+df = pd.read_csv(file_path)
+
+df.rename(columns={"Unnamed: 0": "Date"}, inplace=True)
+
+df["Date"] = pd.to_datetime(df["Date"], errors='coerce')
+
+df = df.dropna(thresh=len(df) * 0.5, axis=1)
+
+df.fillna(0, inplace=True)
+
+numeric_columns = df.columns[1:]
+df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce')
+
+df = df.drop_duplicates()
+
+required_columns = [
+    "Date", "Revenue", "Net Income", "Total Debt", "Total Equity", 
+    "Working Capital", "Cash And Cash Equivalents", "Short Term Investments", 
+    "Total Assets", "Net Tangible Assets", "Finished Goods", "Work In Process", 
+    "Raw Materials", "Accounts Receivable"
+]
+
+existing_columns = [col for col in required_columns if col in df.columns]
+
+df_filtered = df[existing_columns].copy()
+
+if "Total Debt" in df_filtered.columns and "Total Equity" in df_filtered.columns:
+    df_filtered["Debt-to-Equity Ratio"] = df_filtered["Total Debt"] / df_filtered["Total Equity"]
+
+cleaned_file_path = r"C:\Users\GGPC\Desktop\Python Trial\cleaned_tesla_balance_sheet.csv"
+df_filtered.to_csv(cleaned_file_path, index=False)
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+# CAsh Flow
+
+
+import pandas as pd
+
+file_path = r"C:\Users\GGPC\Desktop\Python Trial\tesla_cash_flow.csv"
+df = pd.read_csv(file_path)
+
+df.rename(columns={"Unnamed: 0": "Date"}, inplace=True)
+
+df["Date"] = pd.to_datetime(df["Date"], errors='coerce')
+
+required_columns = [
+    "Date", "Free Cash Flow", "Repayment Of Debt", "Issuance Of Debt", 
+    "Capital Expenditure", "End Cash Position", "Depreciation And Amortization", 
+    "Net Income From Continuing Operations"
+]
+
+existing_columns = [col for col in required_columns if col in df.columns]
+
+df_filtered = df[existing_columns].copy()
+
+df_filtered.fillna(0, inplace=True)
+
+numeric_columns = df_filtered.columns[1:]
+df_filtered[numeric_columns] = df_filtered[numeric_columns].apply(pd.to_numeric, errors='coerce')
+
+df_filtered = df_filtered.drop_duplicates()
+
+cleaned_file_path = r"C:\Users\GGPC\Desktop\Python Trial\cleaned_tesla_cash_flow.csv"
+df_filtered.to_csv(cleaned_file_path, index=False)
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# Income Statement
+
+
+import pandas as pd
+
+file_path = r"C:\Users\GGPC\Desktop\Python Trial\tesla_income_statement.csv"
+df = pd.read_csv(file_path)
+
+df.rename(columns={"Unnamed: 0": "Date"}, inplace=True)
+
+df["Date"] = pd.to_datetime(df["Date"], errors='coerce')
+
+required_columns = [
+    "Date", "Total Revenue", "Gross Profit", "Operating Income", 
+    "Net Income From Continuing Operation", "Cost Of Revenue", 
+    "Operating Expense", "Selling General And Administration", 
+    "Research And Development", "Interest Expense Non Operating", 
+    "Interest Income Non Operating", "EBITDA", "Reconciled Depreciation"
+]
+
+existing_columns = [col for col in required_columns if col in df.columns]
+
+df_filtered = df[existing_columns].copy()
+
+df_filtered.fillna(0, inplace=True)
+
+numeric_columns = df_filtered.columns[1:]
+df_filtered[numeric_columns] = df_filtered[numeric_columns].apply(pd.to_numeric, errors='coerce')
+
+df_filtered = df_filtered.drop_duplicates()
+
+cleaned_file_path = r"C:\Users\GGPC\Desktop\Python Trial\cleaned_tesla_income_statement.csv"
+df_filtered.to_csv(cleaned_file_path, index=False)
+
